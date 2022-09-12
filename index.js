@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 // Import Routes
 const productRoutes = require("./src/routes/products");
@@ -29,7 +30,15 @@ app.use((error, req, res, next) => {
   const message = error.message;
   const data = error.data;
   res.status(status).json({ message: message, data: data });
-  // res.json({ error: error});
+  next();
 });
 
-app.listen(4000);
+mongoose
+  .connect(
+    "mongodb+srv://muflifadla:Bu1IjpXOTzlIuV4k@cluster0.7oolqag.mongodb.net/?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    app.listen(4000);
+    console.log("Connection Success");
+  })
+  .catch((err) => console.log(err));
