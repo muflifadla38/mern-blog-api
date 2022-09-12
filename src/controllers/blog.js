@@ -21,7 +21,7 @@ exports.getPosts = (req, res, next) => {
 exports.createPost = (req, res, next) => {
   const errors = validationResult(req); //Validation error results
   const title = req.body.title;
-  const image = req.body.image;
+  // const image = req.body.image;
   const body = req.body.body;
 
   if (!errors.isEmpty()) {
@@ -35,7 +35,7 @@ exports.createPost = (req, res, next) => {
     message: "Create post success",
     data: {
       title: title,
-      image: image,
+      // image: image,
       body: body,
       created_at: "12/09/2022",
       author: {
