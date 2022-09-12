@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config({path: ".env"});
+const dotenv = require("dotenv").config({ path: ".env" });
 
 // Import Routes
 const productRoutes = require("./src/routes/products");
