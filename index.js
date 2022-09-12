@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv").config({path: ".env"});
 
 // Import Routes
 const productRoutes = require("./src/routes/products");
@@ -33,10 +34,9 @@ app.use((error, req, res, next) => {
   next();
 });
 
+const MONGO_URL = process.env.MONGO_URL;
 mongoose
-  .connect(
-    "mongodb+srv://muflifadla:Bu1IjpXOTzlIuV4k@cluster0.7oolqag.mongodb.net/?retryWrites=true&w=majority"
-  )
+  .connect(MONGO_URL)
   .then(() => {
     app.listen(4000);
     console.log("Connection Success");
