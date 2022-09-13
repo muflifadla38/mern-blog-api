@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const multer = require("multer");
 const dotenv = require("dotenv").config({ path: ".env" });
 
 // Import Routes
@@ -8,6 +9,7 @@ const productRoutes = require("./src/routes/products");
 const authRoutes = require("./src/routes/auth");
 const blogRoutes = require("./src/routes/blog");
 
+// Create express app
 const app = express();
 
 //Allow CORS
@@ -21,11 +23,36 @@ app.use((req, res, next) => {
 //Parse body request (JSON)
 app.use(bodyParser.json());
 
+//Set image storage & format filename
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images"); //File save location (root/images)
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().getTime() + "-" + file.originalname); //File name format
+  }
+});
+
+//Set file filter (only accept image file)
+const fileFilter = (req, file, cb) => {
+  const filter =
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg";
+  filter ? cb(null, true) : cb(null, false);
+};
+
+// Upload image file to root/image with file filter and single file only (using req.body.image)
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
+
 //Grouping Routes
 app.use("/v1/customer/", productRoutes);
 app.use("/v1/auth/", authRoutes);
 app.use("/v1/blog/", blogRoutes);
 
+// Error Handling
 app.use((error, req, res, next) => {
   const status = error.errorStatus || 500;
   const message = error.message;
@@ -34,6 +61,7 @@ app.use((error, req, res, next) => {
   next();
 });
 
+//Connect to DB
 const MONGO_URL = process.env.MONGO_URL;
 mongoose
   .connect(MONGO_URL)

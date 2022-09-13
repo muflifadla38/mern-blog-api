@@ -21,10 +21,8 @@ exports.getPosts = (req, res, next) => {
 
 exports.createPost = (req, res, next) => {
   const errors = validationResult(req); //Validation error results
-  const title = req.body.title;
-  // const image = req.body.image;
-  const body = req.body.body;
 
+  //Check "body" validation error
   if (!errors.isEmpty()) {
     const err = new Error("Input value tidak sesuai");
     err.errorStatus = 400;
@@ -32,10 +30,23 @@ exports.createPost = (req, res, next) => {
     throw err;
   }
 
+  //Check "file image" validation error
+  if (!req.file) {
+    const err = new Error("Image harus diupload");
+    err.errorStatus = 422;
+    throw err;
+  }
+
+  // Init title, image, body
+  const title = req.body.title;
+  const image = req.file.path; //url image
+  const body = req.body.body;
+
   //Create post in DB
   const post = new BlogPost({
     title: title,
     body: body,
+    image: image,
     author: {
       uid: 1,
       name: "Testing",
