@@ -11,10 +11,32 @@ const removeImage = (filePath) => {
 };
 
 exports.getPosts = (req, res, next) => {
+  const currentPage = parseInt(req.query.page || 1);
+  const perPage = parseInt(req.query.perPage || 5);
+  let totalItems;
+
+  // Pagination (post per page)
   BlogPost.find()
+    .countDocuments()
+    .then((count) => {
+      totalItems = count;
+      return BlogPost.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
     .then((result) => {
+      //Check if no post on this page
+      if (!result.length) {
+        const error = new Error("Post tidak ditemukan");
+        error.errorStatus = 404;
+        throw error;
+      }
+
       res.status(200).json({
         message: "Get all posts success",
+        total_data: totalItems,
+        per_page: perPage,
+        current_page: currentPage,
         data: result,
       });
     })
