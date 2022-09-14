@@ -12,7 +12,7 @@ const removeImage = (filePath) => {
 
 exports.getPosts = (req, res, next) => {
   const currentPage = parseInt(req.query.page || 1);
-  const perPage = parseInt(req.query.perPage || 5);
+  const perPage = parseInt(req.query.perPage || 6);
   let totalItems;
 
   // Pagination (post per page)
@@ -62,7 +62,7 @@ exports.getPostById = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-exports.createPost = (req, res, next) => {
+exports.createPost = (req, res) => {
   const errors = validationResult(req); //Validation error results
 
   //Check "body" validation error

@@ -13,8 +13,8 @@ exports.getAllProduct = (req, res, next) => {
 };
 
 exports.createProduct = (req, res, next) => {
-  nama = req.body.name;
-  price = req.body.price;
+  const nama = req.body.name;
+  const price = req.body.price;
   res.json({
     message: "Create product success",
     data: {
