@@ -2,21 +2,15 @@ const { validationResult } = require("express-validator");
 const BlogPost = require("../models/blog");
 
 exports.getPosts = (req, res, next) => {
-  res.status(200).json({
-    message: "Get all posts success",
-    data: [
-      {
-        title: "Title Post 1",
-        image: "imagefile.jpg",
-        body: "lorem ipsum dolor sit amet",
-      },
-      {
-        title: "Title Post 2",
-        image: "imagefile.jpg",
-        body: "lorem ipsum dolor sit amet dolo sit",
-      },
-    ],
-  });
+  BlogPost.find()
+  .then(result => {
+      res.status(200).json({
+        message: "Get all posts success",
+        data: result,
+      });
+  })
+  .catch(err => next(err)); //Menampilkan error ke FE
+
 };
 
 exports.createPost = (req, res, next) => {
