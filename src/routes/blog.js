@@ -4,13 +4,13 @@ const blogController = require("../controllers/blog");
 
 const router = express.Router();
 
-//Get all posts
+// Get all posts
 router.get("/posts", blogController.getPosts);
 
-//Get Detail Post
+// Get Detail Post
 router.get("/post/:postId", blogController.getPostById);
 
-//Create a post
+// Create a post
 router.post(
   "/create-post",
   [
@@ -20,7 +20,7 @@ router.post(
   blogController.createPost
 );
 
-//Update a post
+// Update a post
 router.put(
   "/post/:postId",
   [
@@ -31,6 +31,6 @@ router.put(
 );
 
 // Delete a post
-// router.delete("/post/{id}", blogController.deletePost);
+router.delete("/post/:postId", blogController.deletePost);
 
 module.exports = router;

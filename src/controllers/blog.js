@@ -1,5 +1,14 @@
 const { validationResult } = require("express-validator");
+const path = require("path");
+const fs = require("fs");
 const BlogPost = require("../models/blog");
+
+const removeImage = (filePath) => {
+  filePath = path.join(__dirname, "../..", filePath);
+  fs.unlink(filePath, (err) =>
+    err ? console.log(err) : console.log("Image deleted")
+  );
+};
 
 exports.getPosts = (req, res, next) => {
   BlogPost.find()
@@ -112,17 +121,48 @@ exports.updatePost = (req, res, next) => {
         throw error;
       }
 
-      //Update post "result" in DB (post===result)
+      //Remove image
+      removeImage(post.image);
+
+      //Update post "result" (post===result)
       post.title = title;
       post.body = body;
       post.image = image;
 
+      //Update post to DB
       return post.save();
     })
     .then((result) => {
       //Show result to FE
       res.status(200).json({
         message: "Update post success",
+        data: result,
+      });
+    })
+    .catch((err) => next(err));
+};
+
+exports.deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+
+  BlogPost.findById(postId)
+    .then((post) => {
+      //Check if post not found
+      if (!post) {
+        const error = new Error("Post tidak ditemukan");
+        error.errorStatus = 404;
+        throw error;
+      }
+
+      //Delete post in DB
+      return BlogPost.findByIdAndDelete(postId);
+    })
+    .then((result) => {
+      //Remove image
+      removeImage(result.image);
+
+      res.status(200).json({
+        message: "Delete post success",
         data: result,
       });
     })
