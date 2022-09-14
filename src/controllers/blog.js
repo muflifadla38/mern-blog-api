@@ -3,14 +3,32 @@ const BlogPost = require("../models/blog");
 
 exports.getPosts = (req, res, next) => {
   BlogPost.find()
-  .then(result => {
+    .then((result) => {
       res.status(200).json({
         message: "Get all posts success",
         data: result,
       });
-  })
-  .catch(err => next(err)); //Menampilkan error ke FE
+    })
+    .catch((err) => next(err)); //Menampilkan error ke FE
+};
 
+exports.getPostById = (req, res, next) => {
+  const postId = req.params.postId;
+  BlogPost.findById(postId)
+    .then((result) => {
+      //Check if post not found
+      if (!result) {
+        const error = new Error("Post tidak ditemukan");
+        error.errorStatus = 404;
+        throw error;
+      }
+
+      res.status(200).json({
+        message: "Get detail post success",
+        data: result,
+      });
+    })
+    .catch((err) => next(err));
 };
 
 exports.createPost = (req, res, next) => {

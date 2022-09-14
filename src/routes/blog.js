@@ -7,6 +7,9 @@ const router = express.Router();
 //Get all posts
 router.get("/posts", blogController.getPosts);
 
+//Get Detail Post
+router.get("/post/:postId", blogController.getPostById);
+
 //Create a post
 router.post(
   "/create-post",
