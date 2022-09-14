@@ -20,7 +20,17 @@ router.post(
   blogController.createPost
 );
 
-// router.put("/post/{id}", blogController.updatePosts); //Update a post
-// router.delete("/post/{id}", blogController.deletePosts); //Delete a post
+//Update a post
+router.put(
+  "/post/:postId",
+  [
+    body("title").isLength({ min: 8 }).withMessage("Input Title tidak sesuai"),
+    body("body").isLength({ min: 10 }).withMessage("Input Body tidak sesuai"),
+  ],
+  blogController.updatePost
+);
+
+// Delete a post
+// router.delete("/post/{id}", blogController.deletePost);
 
 module.exports = router;

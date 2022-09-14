@@ -78,3 +78,53 @@ exports.createPost = (req, res, next) => {
       console.log("err: ", err);
     });
 };
+
+exports.updatePost = (req, res, next) => {
+  const errors = validationResult(req); //Validation error results
+
+  //Check "body" validation error
+  if (!errors.isEmpty()) {
+    const err = new Error("Input value tidak sesuai");
+    err.errorStatus = 400;
+    err.data = errors.array();
+    throw err;
+  }
+
+  //Check "file image" validation error
+  if (!req.file) {
+    const err = new Error("Image harus diupload");
+    err.errorStatus = 422;
+    throw err;
+  }
+
+  // Init title, image, body, postId
+  const title = req.body.title;
+  const image = req.file.path; //url image
+  const body = req.body.body;
+  const postId = req.params.postId;
+
+  BlogPost.findById(postId)
+    .then((post) => {
+      //Check if post not found
+      if (!post) {
+        const error = new Error("Post tidak ditemukan");
+        error.errorStatus = 404;
+        throw error;
+      }
+
+      //Update post "result" in DB (post===result)
+      post.title = title;
+      post.body = body;
+      post.image = image;
+
+      return post.save();
+    })
+    .then((result) => {
+      //Show result to FE
+      res.status(200).json({
+        message: "Update post success",
+        data: result,
+      });
+    })
+    .catch((err) => next(err));
+};
